@@ -6,7 +6,7 @@ import json
 import redis
 import asyncio
 import websockets
-from subprocess import call
+import subprocess
 from datetime import datetime
 
 LOG_FILE = "/var/log/bot_update.log"
@@ -36,6 +36,19 @@ def log(data):
     with open(LOG_FILE, "a") as f:
         f.write("{}\n".format(data))
 
+def install_luarocks(_type,data):
+    count = 0
+    process = subprocess.Popen(
+        ["luarocks list"],
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT)
+    installed = process.stdout.read().splitlines()
+    for item in data:
+        if item not in installed:
+            count += 1
+            subprocess.call(["luarocks","install","wtf-{}-{}".format(_type, item.replace(".","-"))])
+    return count
 
 async def send_data(data):
     link = "wss://{}:443/policies/{}".format(
@@ -45,15 +58,8 @@ async def send_data(data):
         await websocket.send(data)
         response = await websocket.recv()
         policies = json.loads(response)
-        count = {"changed": 0, "new": 0}
+        count = {"changed": 0, "new": 0, "plugins": 0, "actions": 0, "storages": 0}
         for item in policies:
-            for plugin in item["policy"]["plugins"]:
-                call(["luarocks","install","wtf-plugin-{}".format(plugin.replace(".","-"))])
-            for storage in item["policy"]["storages"]:
-                call(["luarocks","install","wtf-storage-{}".format(storage.replace(".","-"))])
-            for action in item["policy"]["actions"]:
-                call(["luarocks","install","wtf-action-{}".format(action.replace(".","-"))])
-
             policy_json = "/etc/openresty/wtf-demo-policy/policy/{}.json".format(
                 item["policy"]["name"])
             if os.path.exists(policy_json):
@@ -65,15 +71,27 @@ async def send_data(data):
                     count["changed"] += 1
                     with open(policy_json, "w") as f:
                         f.write(json.dumps(item["policy"]))
-                    call(["service", "openresty", "reload"])
+                    count["plugins"] += install_luarocks("plugin", item["policy"]["plugins"])
+                    count["actions"] += install_luarocks("action", item["policy"]["plugins"])
+                    count["storages"] += install_luarocks("storage", item["policy"]["plugins"])
+                    subprocess.call(["service", "openresty", "reload"])
             else:
                 count["new"] += 1
                 with open(policy_json, "w") as f:
                     f.write(json.dumps(item["policy"]))
-                call(["service", "openresty", "reload"])
+                count["plugins"] += install_luarocks("plugin", item["policy"]["plugins"])
+                count["actions"] += install_luarocks("action", item["policy"]["plugins"])
+                count["storages"] += install_luarocks("storage", item["policy"]["plugins"])
+                subprocess.call(["service", "openresty", "reload"])
         if count["changed"] > 0 or count["new"] > 0:
             log("{} [INFO] Added {} policies, changed {}".format(
                 str(datetime.now()), count["new"], count["changed"]))
+        for item in ["actions", "plugins", "storages"]:
+            if count[item] > 0:
+                log("{} [INFO] {} {} installed".format(
+                    str(datetime.now()), count[item], item))
+
+
 try:
     data = {
         "id": os.environ["HB_ID"],
