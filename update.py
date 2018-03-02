@@ -80,8 +80,8 @@ async def send_data(data):
                 with open(policy_json, "w") as f:
                     f.write(json.dumps(item["policy"]))
                 count["plugins"] += install_luarocks("plugin", item["policy"]["plugins"])
-                count["actions"] += install_luarocks("action", item["policy"]["plugins"])
-                count["storages"] += install_luarocks("storage", item["policy"]["plugins"])
+                count["actions"] += install_luarocks("action", item["policy"]["actions"])
+                count["storages"] += install_luarocks("storage", item["policy"]["storages"])
                 subprocess.call(["service", "openresty", "reload"])
         if count["changed"] > 0 or count["new"] > 0:
             log("{} [INFO] Added {} policies, changed {}".format(
