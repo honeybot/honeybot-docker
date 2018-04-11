@@ -32,6 +32,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && luarocks install wtf \
     && luarocks install wtf-honeybot-core \
     &&  sed -i "s/ngx.socket.tcp/require(\"socket.unix\")/g" /usr/local/openresty/lualib/resty/redis.lua \
+    &&  sed -i "/if.*ULIMIT/,+4d" /etc/init.d/redis-server \
+    &&  sed -i "s/^\(.*pam_loginuid.so\)/#\1/" /etc/pam.d/cron \
     && find /usr/local/openresty/lualib/resty/ -type f -exec sed -i "s/sock:send(req)/sock:send(table.concat(req))/g" {} \; \
     && sed -i "s/^bind/#bind/g" /etc/redis/redis.conf \
     && mkdir /var/run/redis \
