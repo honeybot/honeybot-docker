@@ -27,8 +27,10 @@ def get_from_redis():
     result = []
     r = redis.Redis(unix_socket_path='/var/run/redis/redis.sock')
     for key in r.scan_iter("*"):
-        result.append(json.loads(r.get(key).decode("utf8")))
+        result.append(json.loads(r.get(key).decode("utf8", "ignore")))
         r.delete(key)
+        if len(result) > 1000:
+            break
     return result
 
 def log(data):
