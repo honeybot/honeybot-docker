@@ -27,8 +27,12 @@ def get_from_redis():
     result = []
     r = redis.Redis(unix_socket_path='/var/run/redis/redis.sock')
     for key in r.scan_iter("*"):
-        result.append(json.loads(r.get(key).decode("utf8", "ignore")))
-        r.delete(key)
+        try:
+            result.append(json.loads(r.get(key).decode("utf8", "ignore")))
+            if "ip" in result and "id" in result and "method" in result:
+                r.delete(key)
+        except Exception as err:
+            print(err)
         if len(result) > 1000:
             break
     return result
