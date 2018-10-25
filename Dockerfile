@@ -28,7 +28,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
         websockets \
         asyncio \
         redis \
-    && luarocks install luarocks \
+    && luarocks install luarocks 2.4.4 \
     && luarocks install wtf \
     && luarocks install wtf-honeybot-core \
     &&  sed -i "s/ngx.socket.tcp/require(\"socket.unix\")/g" /usr/local/openresty/lualib/resty/redis.lua \
