@@ -22,13 +22,17 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         openresty \
-        luarocks \
         redis-server \
     && pip3 install \
         websockets \
         asyncio \
         redis \
-    && luarocks install luarocks \
+    && wget https://luarocks.org/releases/luarocks-3.3.1.tar.gz \
+    && tar zxpf luarocks-3.3.1.tar.gz \
+    && cd luarocks-3.3.1 \
+    && ./configure \
+    && make build \
+    && make install \
     && luarocks install wtf \
     && luarocks install wtf-honeybot-core \
     &&  sed -i "s/ngx.socket.tcp/require(\"socket.unix\")/g" /usr/local/openresty/lualib/resty/redis.lua \
