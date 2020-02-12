@@ -80,7 +80,7 @@ if  "HB_GROUPID" not in  os.environ.keys() or not os.environ["HB_GROUPID"]:
         str(datetime.now())))
     sys.exit("HB_GROUPID environment variable is not set")
 
-if  "HB_HOST" not in  os.environ.keys() or not os.environ["HG_HOST"]:
+if  "HG_HOST" not in  os.environ.keys() or not os.environ["HG_HOST"]:
     log("{} [ERROR] HG_HOST environment variable is not set".format(
         str(datetime.now())))
     sys.exit("HG_HOST environment variable is not set")
