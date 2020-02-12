@@ -11,27 +11,6 @@ from datetime import datetime
 
 LOG_FILE = "/var/log/bot_update.log"
 
-if not os.environ["HB_ID"]:
-    log("{} [ERROR] HB_GROUPID environment variable is not set".format(
-        str(datetime.now())))
-    sys.exit("HB_GROUPID environment variable is not set")
-
-if not os.environ["HB_ID"]:
-    log("{} [ERROR] HB_GROUPID environment variable is not set".format(
-        str(datetime.now())))
-    sys.exit("HB_GROUPID environment variable is not set")
-
-if not os.environ["HG_HOST"]:
-    log("{} [ERROR] HG_HOST environment variable is not set".format(
-        str(datetime.now())))
-    sys.exit("HG_HOST environment variable is not set")
-
-if not os.environ["HG_KEY"]:
-    log("{} [ERROR] HG_KEY environment variable is not set".format(
-        str(datetime.now())))
-    sys.exit("HG_KEY environment variable is not set")
-
-
 def log(data):
     with open(LOG_FILE, "a") as f:
         f.write("{}\n".format(data))
@@ -91,6 +70,25 @@ async def send_data(data):
                 log("{} [INFO] {} {} installed".format(
                     str(datetime.now()), count[item], item))
 
+if "HB_ID" not in  os.environ.keys() or not os.environ["HB_ID"]:
+    log("{} [ERROR] HB_ID environment variable is not set".format(
+        str(datetime.now())))
+    sys.exit("HB_ID environment variable is not set")
+
+if  "HB_GROUPID" not in  os.environ.keys() or not os.environ["HB_GROUPID"]:
+    log("{} [ERROR] HB_GROUPID environment variable is not set".format(
+        str(datetime.now())))
+    sys.exit("HB_GROUPID environment variable is not set")
+
+if  "HB_HOST" not in  os.environ.keys() or not os.environ["HG_HOST"]:
+    log("{} [ERROR] HG_HOST environment variable is not set".format(
+        str(datetime.now())))
+    sys.exit("HG_HOST environment variable is not set")
+
+if  "HG_KEY" not in  os.environ.keys() or not os.environ["HG_KEY"]:
+    log("{} [ERROR] HG_KEY environment variable is not set".format(
+        str(datetime.now())))
+    sys.exit("HG_KEY environment variable is not set")
 
 try:
     data = {
