@@ -17,11 +17,16 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
         cron \
         git-core \
         make \
+	build-essential \
+	libreadline-dev \
     && wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add - \
     && add-apt-repository -y "deb http://openresty.org/package/debian $(lsb_release -sc) openresty" \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         openresty \
+	lua5.1 \
+	liblua5.1-dev \
+	unzip \
         redis-server \
     && pip3 install \
         websockets \
@@ -33,6 +38,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && ./configure \
     && make build \
     && make install \
+    && cd / \
+    && rm -rf /luarocks-3.3.1 \
     && luarocks install wtf \
     && luarocks install wtf-honeybot-core \
     &&  sed -i "s/ngx.socket.tcp/require(\"socket.unix\")/g" /usr/local/openresty/lualib/resty/redis.lua \
@@ -50,7 +57,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && rm -fr wtf-demo-policy/policy/* \
     && cd /opt \
     && git clone https://github.com/certbot/certbot \
-    && rm -fr /var/cache/apt/archives/*
+    && rm -fr /var/cache/apt/archives/* \
 
 
 ENV PATH=$PATH:/usr/local/openresty/luajit/bin/:/usr/local/openresty/nginx/sbin/:/usr/local/openresty/bin/
