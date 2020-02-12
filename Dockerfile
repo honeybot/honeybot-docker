@@ -2,7 +2,7 @@
 
 FROM debian:stretch
 
-LABEL maintainer="Mikhail Golovanov <migolovanov@ptsecurity.com>"
+LABEL maintainer="Alex Goncharov <bot@honey-bot.com>"
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
