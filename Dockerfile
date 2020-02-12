@@ -57,8 +57,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && rm -fr wtf-demo-policy/policy/* \
     && cd /opt \
     && git clone https://github.com/certbot/certbot \
-    && rm -fr /var/cache/apt/archives/* \
-
+    && rm -fr /var/cache/apt/archives/* 
 
 ENV PATH=$PATH:/usr/local/openresty/luajit/bin/:/usr/local/openresty/nginx/sbin/:/usr/local/openresty/bin/
 
@@ -67,4 +66,4 @@ COPY /update.py /opt/update.py
 COPY /nginx.conf /etc/openresty/nginx.conf
 COPY /start.sh /
 
-CMD ["/start.sh"]
+CMD ["/bin/bash", "/start.sh"]
